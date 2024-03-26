@@ -1,10 +1,10 @@
 class Editora:
 
     def __init__(self, 
-                    id: int, 
-                    nome: str,
-                    endereco: str,
-                    telefone: str):
+                    id: int = None, 
+                    nome: str = None,
+                    endereco: str = None,
+                    telefone: str = None):
         self.__id: int = id
         self.__nome: str = nome
         self.__endereco: str = endereco
