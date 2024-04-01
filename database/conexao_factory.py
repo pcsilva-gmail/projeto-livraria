@@ -11,4 +11,4 @@ from settings import (
 class ConexaoFactory:
     
     def get_conexao(self):
-        return psycopg2.pool.SimpleConnectionPool(2, 5, host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD ).getconn()
+        return psycopg2.pool.SimpleConnectionPool(1, 6, host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASSWORD ).getconn()

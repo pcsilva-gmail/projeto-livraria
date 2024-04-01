@@ -1,12 +1,13 @@
 from  service.categoria_service import CategoriaService
 from  service.editora_service   import EditoraService
 from  service.autor_service     import AutorService
+from  service.livro_service     import LivroService
 
 
 categoria_service = CategoriaService()
 editora_service = EditoraService()
 autor_service =  AutorService()
-
+livro_service = LivroService()
 
 def menu_principal():
     print('[Menu Principal] Escolha uma das seguintes opções:\n'
@@ -30,13 +31,11 @@ def menu_principal():
         # print('Em construção...')
         autor_service.menu()
     elif escolha == '4':
-        print('Em construção...')
+        # print('Em construção...')
+        livro_service.menu()        
     else:
         print('Opção inválida! Por favor, tente novamente!')
-
-
     menu_principal()
-
 
 if __name__ == '__main__':
     print('Bem-vindo a Livraria SHIFT - Mastering Python!')

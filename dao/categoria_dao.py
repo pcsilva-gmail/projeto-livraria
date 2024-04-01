@@ -1,30 +1,30 @@
 from database.conexao_factory import ConexaoFactory
 from model.categoria import Categoria
 
-class CategoriaDAO:
-    def __init__(self):
+class CategoriaDAO(ConexaoFactory):
+    # def __init__(self):
         # self.__categorias: list[Categoria] = list()
-        self.__conexao_factory = ConexaoFactory()
+        # self.__conexao_factory = ConexaoFactory().get_conexao()
 
 
     def listar(self) -> list[Categoria]:
         # return self.__categorias
         categorias = list()
         try:
-            conexao = self.__conexao_factory.get_conexao()
-            cursor = conexao.cursor()
-            cursor.execute("SELECT id, nome FROM categorias")
-            resultados = cursor.fetchall()
-            for resultado in resultados:
-                cat = Categoria(resultado[0], resultado[1])
-                categorias.append(cat)
-                # return categorias
+            with super().get_conexao() as conexao:
+                with conexao.cursor() as cursor:
+                    cursor.execute("SELECT id, nome FROM categorias")
+                    resultados = cursor.fetchall()
+                    for resultado in resultados:
+                        cat = Categoria(resultado[0], resultado[1])
+                        categorias.append(cat)
+                    return categorias
         except Exception as e:
             print(f"An error occurred: {e}")
             return
-        finally:
-            cursor.close()
-            conexao.close()
+        # finally:
+        #     cursor.close()
+        #     conexao.close()
 
         return(categorias)
 
@@ -56,7 +56,7 @@ class CategoriaDAO:
         try:
             conexao = self.__conexao_factory.get_conexao()
             cursor = conexao.cursor()
-            cursor.execute("DELETE FROM categorias WHERE id = {categoria_id}")
+            cursor.execute(f"DELETE FROM categorias WHERE id = {categoria_id}")
             categorias_removidas = cursor.rowcount
             if (categorias_removidas == 0):
                 return False
@@ -67,9 +67,6 @@ class CategoriaDAO:
         finally:
             cursor.close()
             conexao.close()
-
-
-
         return encontrado
 
 
@@ -80,20 +77,20 @@ class CategoriaDAO:
         #         cat = c
         #         break
         try:
-            conexao = self.__conexao_factory.get_conexao()
-            cursor = conexao.cursor()
-            cursor.execute("SELECT id, nome FROM categoria WHERE id = {categoria_id}")
-            resultado = cursor.fetchone()
-            cat = Categoria(resultado[0], resultado[1])
-            if cat is None:
-                return None
-            return cat 
+            with super().get_conexao() as conexao:
+                with conexao.cursor() as cursor:
+                    cursor.execute(f"SELECT id, nome FROM categorias WHERE id = {categoria_id}")
+                    resultado = cursor.fetchone()
+                    cat = Categoria(resultado[0], resultado[1])
+                    if cat is None:
+                        return None
+                    return cat 
         except Exception as e:
             print(f"An error occurred: {e}")
-            return
-        finally:
-            cursor.close()
-            conexao.close()        
+            return cat
+        # finally:
+        #     cursor.close()
+        #     conexao.close()        
         
    
     def ultimo_id(self) -> int:
