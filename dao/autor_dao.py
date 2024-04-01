@@ -1,8 +1,10 @@
 from model.autor import Autor
+from database.conexao_factory import ConexaoFactory
 
-class AutorDAO:
+class AutorDAO(ConexaoFactory):
     def __init__(self):
         self.__autores: list[Autor] = list()
+        # self.__conexao_factory = ConexaoFactory().get_conexao()        
 
 
     def listar(self) -> list[Autor]:
@@ -26,11 +28,22 @@ class AutorDAO:
 
     def buscar_por_id(self, autor_id) -> Autor:
         aut = None
-        for c in self.__autores:
-            if (c.id == autor_id):
-                aut = c
-                break
-        return aut
+        try:
+            with super().get_conexao() as conexao:
+                with conexao.cursor() as cursor:
+                    cursor.execute(f"SELECT id, nome, email, telefone, bio FROM autores WHERE id = {autor_id}")
+                    resultado = cursor.fetchone()
+                    aut = Autor(resultado[0], resultado[1], resultado[2], resultado[3], resultado[4])
+                    if aut is None:
+                        return None
+                    return aut 
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return aut
+        # finally:
+        #     cursor.close()
+        #     conexao.close()                
+
    
     def ultimo_id(self) -> int:
         index = len(self.__autores) -1
